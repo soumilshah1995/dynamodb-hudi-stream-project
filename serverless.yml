@@ -1,0 +1,101 @@
+service: dynamodb-hudi-project
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.7
+  memorySize: 512
+  timeout: 600
+  architecture: x86_64
+  stackTags:
+    product: datateam
+    env: qa
+    created-date: 2022-04-26
+    team: python-dev
+    customer-impact: false
+    terraform: false
+
+useDotenv: true
+
+
+
+functions:
+  lambda:
+    handler: lambda_function.lambda_handler
+    environment:
+      DEV_AWS_ACCESS_KEY: ${env:DEV_AWS_ACCESS_KEY}
+      DEV_AWS_SECRET_KEY: ${env:DEV_AWS_SECRET_KEY}
+      DEV_AWS_REGION_NAME: ${env:DEV_AWS_REGION_NAME}
+      STREAM_NAME: ${env:StreamNameHUDI}
+    events:
+      - stream:
+          type: kinesis
+          arn:
+            Fn::GetAtt:
+              - KinesisDataStreams
+              - Arn
+
+
+resources:
+  Resources:
+
+
+    KinesisDataStreamsDynamoDB:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: ${env:StreamNameDynamoDB}
+        RetentionPeriodHours: ${env:RetentionPeriodHoursDynamoDB}
+        StreamModeDetails:
+          StreamMode: ON_DEMAND
+
+    KinesisDataStreamsHUDI:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: ${env:StreamNameHUDI}
+        RetentionPeriodHours: ${env:RetentionPeriodHoursHUDI}
+        StreamModeDetails:
+          StreamMode: ON_DEMAND
+
+    DynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:DYNAMO_DB_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableClass: STANDARD
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        KinesisStreamSpecification:
+          StreamArn: !GetAtt KinesisDataStreams.Arn
+
+
+
+#    GlueDatabase:
+#      Type: AWS::Glue::Database
+#      Properties:
+#        CatalogId: ${env:Account}
+#        DatabaseInput:
+#          Name: ${env:DB_NAME}
+#
+#    TableGlueCrawlerAthena:
+#      Type: AWS::Glue::Crawler
+#      Properties:
+#        DatabaseName: ${env:DB_NAME}
+#        Name: ${env:CRAWLER_NAME_S3}
+#        RecrawlPolicy:
+#          RecrawlBehavior: CRAWL_EVERYTHING
+#        Role: ${env:GLUE_ROLE_ARN}
+#        SchemaChangePolicy:
+#          DeleteBehavior: DEPRECATE_IN_DATABASE
+#        Targets:
+#          S3Targets:
+#            - Path: ${env:CRAWLER_TARGET_PATH}
