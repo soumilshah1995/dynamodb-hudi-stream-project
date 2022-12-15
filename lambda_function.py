@@ -125,6 +125,11 @@ def lambda_handler(event, context):
 
             year, month, day = Datetime.get_year_month_day()
 
+            json_data_unmarshal["year"] = year
+            json_data_unmarshal["month"] = month
+            json_data_unmarshal["day"] = day
+            json_data_unmarshal["date"] = datetime.now().strftime('%Y-%m-%d')
+
             json_string = json.dumps(json_data_unmarshal, cls=CustomJsonEncoder)
 
             json_dict = json.loads(json_string)
@@ -136,7 +141,10 @@ def lambda_handler(event, context):
             put_response = kinesis_client.put_record(
                 StreamName=os.getenv("STREAM_NAME"),
                 Data=json.dumps(_final_processed_json),
-                PartitionKey=random.randint(1,10))
+                PartitionKey=str(random.randint(1, 10))
+            )
+
+            print("put_response", put_response)
 
             print("_final_processed_json", _final_processed_json)
 

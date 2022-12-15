@@ -17,6 +17,43 @@ provider:
 
 useDotenv: true
 
+plugins:
+  - serverless-glue
+
+
+Glue:
+  bucketDeploy: ${env:GLUE_BUCKET_DEPLOY}
+  tempDirBucket: ${env:GLUE_BUCKET_DEPLOY}
+  tempDirS3Prefix: 'temp/'
+  jobs:
+    - name: ${env:GLUE_JOB_NAME}
+      scriptPath: ${env:GLUE_SCRIPT_NAME}
+      type: spark
+      glueVersion: "python3-3.0"
+      role: ${env:ROLE}
+      MaxConcurrentRuns: 3
+      Connections:
+        - ${env:GLUE_HUDI_CONNECTOR_NAME}
+      DefaultArguments:
+        customArguments:
+          class : 'GlueApp'
+          database_name: ${env:GLUE_DB_NAME}
+          hudi_table_name: ${env:HUDI_TABLE_NAME}
+          kinesis_table_name : ${env:GLUE_KINESIS_TABLE}
+          s3_path_hudi : ${env:HUDI_DATALAKE_PATH}
+          s3_path_spark : ${env:GLUE_STREAM_CHECK_POINT}
+          starting_position_of_kinesis_iterator: 'LATEST'
+          window_size : ${env:KINESIS_PROCESS_WINDOW}
+      tempDir: true
+      WorkerType: Standard
+      NumberOfWorkers: 3
+      Timeout: 2880
+      MaxRetries: 0
+      SupportFiles:
+        - local_path: ${env:GLUE_SCRIPT_NAME}
+          s3_bucket: ${env:GLUE_SCRIPT_BUCKET}
+          s3_prefix: 'Scripts/'
+          execute_upload: True
 
 
 functions:
@@ -32,13 +69,12 @@ functions:
           type: kinesis
           arn:
             Fn::GetAtt:
-              - KinesisDataStreams
+              - KinesisDataStreamsDynamoDB
               - Arn
 
 
 resources:
   Resources:
-
 
     KinesisDataStreamsDynamoDB:
       Type: AWS::Kinesis::Stream
@@ -75,27 +111,12 @@ resources:
         PointInTimeRecoverySpecification:
           PointInTimeRecoveryEnabled: true
         KinesisStreamSpecification:
-          StreamArn: !GetAtt KinesisDataStreams.Arn
+          StreamArn: !GetAtt KinesisDataStreamsDynamoDB.Arn
 
+    GlueDatabase:
+      Type: AWS::Glue::Database
+      Properties:
+        CatalogId: ${env:ACCOUNT}
+        DatabaseInput:
+          Name: ${env:GLUE_DB_NAME}
 
-
-#    GlueDatabase:
-#      Type: AWS::Glue::Database
-#      Properties:
-#        CatalogId: ${env:Account}
-#        DatabaseInput:
-#          Name: ${env:DB_NAME}
-#
-#    TableGlueCrawlerAthena:
-#      Type: AWS::Glue::Crawler
-#      Properties:
-#        DatabaseName: ${env:DB_NAME}
-#        Name: ${env:CRAWLER_NAME_S3}
-#        RecrawlPolicy:
-#          RecrawlBehavior: CRAWL_EVERYTHING
-#        Role: ${env:GLUE_ROLE_ARN}
-#        SchemaChangePolicy:
-#          DeleteBehavior: DEPRECATE_IN_DATABASE
-#        Targets:
-#          S3Targets:
-#            - Path: ${env:CRAWLER_TARGET_PATH}
