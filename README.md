@@ -5,12 +5,10 @@
 
 * https://www.youtube.com/watch?v=cWmRZ9WOZB8
 
-code 
+code https://github.com/soumilshah1995/dynamodb-hudi-stream-project
 
-https://github.com/soumilshah1995/dynamodb-hudi-stream-project
 
 Step by Step guide with Instruction and Screenshots 
-
 
 PDF https://drive.google.com/file/d/1W-E_SupsoI8VZWGtq5d7doxdWdNDPEoj/view?usp=sharing
  
