@@ -2,18 +2,20 @@
 ![Picture1](https://user-images.githubusercontent.com/39345855/208182950-34a28fda-b59b-4df1-9d0b-b9883d7ce2b1.jpg)
 
 ## Video Tutorial 
+* Link: https://www.youtube.com/watch?v=cWmRZ9WOZB8
 
-* https://www.youtube.com/watch?v=cWmRZ9WOZB8
-
-## code 
-* https://github.com/soumilshah1995/dynamodb-hudi-stream-project
+## Code 
+* Link: https://github.com/soumilshah1995/dynamodb-hudi-stream-project
 
 
 ## Step by Step guide with Instruction and Screenshots 
 * PDF https://drive.google.com/file/d/1W-E_SupsoI8VZWGtq5d7doxdWdNDPEoj/view?usp=sharing
  
+# Steps 
 
-## Step 1: 
+
+
+### Step 1: 
 * Users in this architecture purchase things from online retailers and generate an order transaction that is kept in DynamoDB.
 
 ## Step 2: 
@@ -23,5 +25,4 @@
 * Users can build dashboards and derive insights using QuickSight.
 
 
-#aws #cloud #cloudcomputing #azure #devops #technology #python #amazonwebservices #linux #amazon #programming #awscloud #cybersecurity #coding #googlecloud #developer #kubernetes #bigdata #datascience #microsoft #machinelearning #software #java #tech #it #gcp #awstraining #javascript #security #docker  @apachehudi ​
-dynamodb-hudi-stream-project
+
