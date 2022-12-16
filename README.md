@@ -1,5 +1,8 @@
-# dynamodb-hudi-stream-project
+
 ![Picture1](https://user-images.githubusercontent.com/39345855/208182950-34a28fda-b59b-4df1-9d0b-b9883d7ce2b1.jpg)
+
+### Project Overview
+* Users in this architecture purchase things from online retailers and generate an order transaction that is kept in DynamoDB. The raw data layer stores the order transaction data that is fed into the data lake. To accomplish this, enable Kinesis Data Streams for DynamoDB, and we will stream real-time transactions from DynamoDB into kinesis data streams, process the streaming data with lambda, and insert the data into the next kinesis stream, where a glue streaming job will process and insert the data into Apache Hudi Transaction data lake, and build dashboards and derive insights using QuickSight.
 
 ## Video Tutorial 
 * Link: https://www.youtube.com/watch?v=cWmRZ9WOZB8
