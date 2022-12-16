@@ -1,5 +1,5 @@
 # dynamodb-hudi-stream-project
-![Untitled Diagram drawio](https://user-images.githubusercontent.com/39345855/207884276-affb0e49-4a83-4e8b-9d58-795dacd311d2.png)
+![Picture1](https://user-images.githubusercontent.com/39345855/208182950-34a28fda-b59b-4df1-9d0b-b9883d7ce2b1.jpg)
 
 ## Video Tutorial 
 
